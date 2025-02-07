@@ -29,7 +29,6 @@ export default function RootLayout({
       >
         {children}
       </body>
-      <script src="./oneko.js" async />
     </html>
   );
 }

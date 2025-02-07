@@ -1,9 +1,12 @@
-import { Shiba } from "./components/Shiba";
+import React from "react";
+import LanyardStatus from "@/components/lanyard";
 
-export default function Home() {
+const Home = () => {
   return (
-    <main>
-      <Shiba  muji/>
-    </main>
+    <div>
+      <LanyardStatus />
+    </div>
   );
-}
+};
+
+export default Home;
