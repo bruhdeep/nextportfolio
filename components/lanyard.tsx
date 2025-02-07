@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 
 const LANYARD_WS = "wss://api.lanyard.rest/socket";
-const USER_ID = "413679054777090049"; // Replace with the target Discord user ID
+const USER_ID = "413679054777090049";
 
 interface DiscordUser {
   username: string;
@@ -12,15 +12,6 @@ interface DiscordUser {
   id: string;
   discriminator: string;
   avatar: string;
-}
-
-interface SpotifyActivity {
-  track_id: string;
-  timestamps: { start: number; end: number };
-  song: string;
-  artist: string;
-  album_art_url: string;
-  album: string;
 }
 
 interface Activity {
@@ -39,12 +30,9 @@ interface Activity {
   };
 }
 
-// Remove KV interface
 interface Presence {
   active_on_discord_mobile: boolean;
   active_on_discord_desktop: boolean;
-  listening_to_spotify: boolean;
-  spotify?: SpotifyActivity;
   discord_user: DiscordUser;
   discord_status: string;
   activities: Activity[];
@@ -56,7 +44,6 @@ export default function LanyardStatus() {
   const [heartbeatInterval, setHeartbeatInterval] = useState<number | null>(
     null
   );
-  const [songProgress, setSongProgress] = useState<number>(0);
 
   useEffect(() => {
     const ws = new WebSocket(LANYARD_WS);
@@ -99,23 +86,6 @@ export default function LanyardStatus() {
     return () => clearInterval(heartbeat);
   }, [socket, heartbeatInterval]);
 
-  // Add progress tracking
-  useEffect(() => {
-    if (!presence?.listening_to_spotify || !presence.spotify) return;
-
-    const startTime = presence.spotify.timestamps.start;
-    const endTime = presence.spotify.timestamps.end;
-    const duration = endTime - startTime;
-
-    const interval = setInterval(() => {
-      const now = Date.now();
-      const progress = Math.min(((now - startTime) / duration) * 100, 100);
-      setSongProgress(progress);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [presence?.spotify, presence?.listening_to_spotify]);
-
   if (!presence) return <p>Loading...</p>;
 
   return (
@@ -123,33 +93,9 @@ export default function LanyardStatus() {
       <h2 className="text-xl font-bold">{presence.discord_user.username}</h2>
       <p className="text-sm text-gray-400">Status: {presence.discord_status}</p>
 
-      {/* Spotify Activity */}
-      {presence.listening_to_spotify && presence.spotify && (
-        <div className="mt-4 p-4 bg-gray-800 rounded-lg">
-          <p className="text-sm font-semibold">Listening to Spotify:</p>
-          <p className="text-lg">{presence.spotify.song}</p>
-          <p className="text-sm text-gray-400">{presence.spotify.artist}</p>
-          <img
-            src={presence.spotify.album_art_url}
-            alt="Album Art"
-            className="w-20 h-20 mt-2 rounded-md"
-          />
-          {/* Add progress bar */}
-          <div className="mt-2">
-            <div className="w-full h-1 bg-gray-700 rounded-full">
-              <div
-                className="h-full bg-green-500 rounded-full transition-all duration-1000"
-                style={{ width: `${songProgress}%` }}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Active Applications */}
       {presence.activities.length > 0 && (
         <div className="mt-4">
-          <p className="text-sm font-semibold">Active Apps:</p>
           {presence.activities
             .filter((activity) => activity.type !== 2)
             .map((activity) => (

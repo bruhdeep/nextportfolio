@@ -1,12 +1,18 @@
-import React from "react";
-import LanyardStatus from "@/components/lanyard";
+import Header from "../components/Header";
+import Hero from "../components/Hero";
+import Projects from "../components/Projects";
+import Contact from "../components/Contact";
+import "./globals.css";
 
-const Home = () => {
+export default function Home() {
   return (
-    <div>
-      <LanyardStatus />
+    <div className="bg-white">
+      <Header />
+      <main>
+        <Hero />
+        <Projects />
+        <Contact />
+      </main>
     </div>
   );
-};
-
-export default Home;
+}
