@@ -7,6 +7,9 @@ import "./globals.css";
 import { Providers } from "./providers";
 import type React from "react";
 
+import Header from "@/components/Header";
+import SpotifyNowPlaying from "@/components/SpotifyNowPlaying";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -58,7 +61,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          <Header />
+          {children}
+          <SpotifyNowPlaying />
+        </Providers>
         <Analytics />
         <SpeedInsights />
       </body>
