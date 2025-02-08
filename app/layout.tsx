@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
+
+import { Providers } from "./providers";
+import type React from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,12 +28,39 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+            (function() {
+              function getInitialColorMode() {
+                const persistedColorPreference = window.localStorage.getItem('theme');
+                const hasPersistedPreference = typeof persistedColorPreference === 'string';
+                if (hasPersistedPreference) {
+                  return persistedColorPreference;
+                }
+                const mql = window.matchMedia('(prefers-color-scheme: dark)');
+                const hasMediaQueryPreference = typeof mql.matches === 'boolean';
+                if (hasMediaQueryPreference) {
+                  return mql.matches ? 'dark' : 'light';
+                }
+                return 'light';
+              }
+              const colorMode = getInitialColorMode();
+              document.documentElement.classList.toggle('dark', colorMode === 'dark');
+              document.documentElement.style.colorScheme = colorMode;
+            })()
+          `,
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <Providers>{children}</Providers>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

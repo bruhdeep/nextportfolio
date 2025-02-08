@@ -2,20 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+.dark {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 0, 0, 0;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
 html {
   scroll-behavior: smooth;
-}
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -24,8 +34,27 @@ html {
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+/* Prevent transition on initial load */
+.no-transition {
+  transition: none !important;
+}
+
+/* Add transition after initial load */
+body:not(.no-transition) * {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  100% {
+    transform: translateY(0);
+  }
+  10% {
+    transform: translateY(-5px);
+  }
+}
+
+.bounce-animation {
+  animation: bounce 6s infinite ease-in-out;
 }

@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 
 const LANYARD_WS = "wss://api.lanyard.rest/socket";
-const USER_ID = "413679054777090049";
+const USER_ID = process.env.NEXT_PUBLIC_DISCORD_USER_ID;
 
 interface DiscordUser {
   username: string;
@@ -86,55 +86,67 @@ export default function LanyardStatus() {
     return () => clearInterval(heartbeat);
   }, [socket, heartbeatInterval]);
 
-  if (!presence) return <p>Loading...</p>;
-
   return (
-    <div className="p-6 bg-gray-900 text-white rounded-xl w-96">
-      <h2 className="text-xl font-bold">{presence.discord_user.username}</h2>
-      <p className="text-sm text-gray-400">Status: {presence.discord_status}</p>
+    <div className="p-6 bg-white dark:bg-gray-900 py-24 sm:py-32 transition-colors duration-200 text-white rounded-xl w-96 h-64 flex items-center justify-center">
+      {!presence ? (
+        <p>Loading...</p>
+      ) : (
+        <div>
+          <h2 className="text-xl font-bold">
+            {presence.discord_user.username}
+          </h2>
+          <p className="text-sm text-gray-400">
+            Status: {presence.discord_status}
+          </p>
 
-      {/* Active Applications */}
-      {presence.activities.length > 0 && (
-        <div className="mt-4">
-          {presence.activities
-            .filter((activity) => activity.type !== 2)
-            .map((activity) => (
-              <div
-                key={activity.id}
-                className="p-2 bg-gray-800 rounded-lg mt-2 flex items-center"
-              >
-                {/* Activity Image */}
-                {activity.assets?.large_image && (
-                  <div className="relative mr-3">
-                    <img
-                      src={`https://cdn.discordapp.com/app-assets/${activity.application_id}/${activity.assets.large_image}.png`}
-                      alt={activity.assets.large_text || activity.name}
-                      title={activity.assets.large_text}
-                      className="w-12 h-12 rounded-md"
-                    />
-                    {activity.assets?.small_image && (
-                      <div className="absolute -bottom-1 -right-1">
+          {/* Active Applications */}
+          {presence.activities.length > 0 && (
+            <div className="mt-4">
+              {presence.activities
+                .filter((activity) => activity.type !== 2)
+                .map((activity) => (
+                  <div
+                    key={activity.id}
+                    className="p-2 bg-gray-800 rounded-lg mt-2 flex items-center"
+                  >
+                    {/* Activity Image */}
+                    {activity.assets?.large_image && (
+                      <div className="relative mr-3">
                         <img
-                          src={`https://cdn.discordapp.com/app-assets/${activity.application_id}/${activity.assets.small_image}.png`}
-                          alt={activity.assets.small_text || "status"}
-                          title={activity.assets.small_text}
-                          className="w-5 h-5 rounded-full border-2 border-gray-800 "
+                          src={`https://cdn.discordapp.com/app-assets/${activity.application_id}/${activity.assets.large_image}.png`}
+                          alt={activity.assets.large_text || activity.name}
+                          title={activity.assets.large_text}
+                          className="w-12 h-12 rounded-md"
                         />
+                        {activity.assets?.small_image && (
+                          <div className="absolute -bottom-1 -right-1">
+                            <img
+                              src={`https://cdn.discordapp.com/app-assets/${activity.application_id}/${activity.assets.small_image}.png`}
+                              alt={activity.assets.small_text || "status"}
+                              title={activity.assets.small_text}
+                              className="w-5 h-5 rounded-full border-2 border-gray-800 "
+                            />
+                          </div>
+                        )}
                       </div>
                     )}
+                    <div>
+                      <p className="text-md font-semibold">{activity.name}</p>
+                      {activity.details && (
+                        <p className="text-sm text-gray-400">
+                          {activity.details}
+                        </p>
+                      )}
+                      {activity.state && (
+                        <p className="text-sm text-gray-400">
+                          {activity.state}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                )}
-                <div>
-                  <p className="text-md font-semibold">{activity.name}</p>
-                  {activity.details && (
-                    <p className="text-sm text-gray-400">{activity.details}</p>
-                  )}
-                  {activity.state && (
-                    <p className="text-sm text-gray-400">{activity.state}</p>
-                  )}
-                </div>
-              </div>
-            ))}
+                ))}
+            </div>
+          )}
         </div>
       )}
     </div>
