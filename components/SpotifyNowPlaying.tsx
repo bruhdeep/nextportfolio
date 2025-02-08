@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 interface NowPlayingTrack {
   isPlaying: boolean;
@@ -22,7 +23,7 @@ const SpotifyNowPlaying = () => {
     };
 
     fetchTrack();
-    const interval = setInterval(fetchTrack, 10000); // Refresh every 10 sec
+    const interval = setInterval(fetchTrack, 10000);
 
     return () => clearInterval(interval);
   }, []);
@@ -30,12 +31,20 @@ const SpotifyNowPlaying = () => {
   if (!track) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex items-center space-x-3 p-4 bg-gray-200 dark:bg-gray-800 transition-colors duration-200 rounded-xl shadow-lg w-64 h-20">
+    <motion.div
+      className="spotify fixed bottom-4 right-4 z-50 flex items-center space-x-3 p-4 bg-gray-200 dark:bg-gray-800 transition-colors duration-200 rounded-xl shadow-lg w-64 h-20"
+      whileHover={{ 
+        scale: 1.05,
+        transition: { duration: 0.2 },
+        boxShadow: "0 8px 15px rgba(0, 0, 0, 0.2)"
+      }}
+    >
       {track.albumImageUrl && (
-        <img
+        <motion.img
           src={track.albumImageUrl}
           alt={track.title}
-          className="w-12 h-12 rounded-lg"
+          className="w-14 h-14 rounded-xl"
+          whileHover={{ scale: 1.1 }}
         />
       )}
       <div className="overflow-hidden">
@@ -46,7 +55,7 @@ const SpotifyNowPlaying = () => {
           {track.artist}
         </p>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

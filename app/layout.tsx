@@ -62,6 +62,7 @@ export default function RootLayout({
         <Analytics />
         <SpeedInsights />
       </body>
+      <script src="./oneko.js" async />
     </html>
   );
 }
