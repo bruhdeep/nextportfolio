@@ -94,10 +94,18 @@ export default function LanyardStatus() {
         <div>
           <h2 className="text-xl font-bold">
             {presence.discord_user.username}
+            <span
+              className={`ml-2 inline-block w-3 h-3 rounded-full ${
+                presence.discord_status === "online"
+                  ? "bg-green-500"
+                  : presence.discord_status === "idle"
+                  ? "bg-yellow-500"
+                  : presence.discord_status === "dnd"
+                  ? "bg-red-500"
+                  : "bg-transparent"
+              }`}
+            />
           </h2>
-          <p className="text-sm text-gray-400">
-            Status: {presence.discord_status}
-          </p>
 
           {/* Active Applications */}
           {presence.activities.length > 0 && (
