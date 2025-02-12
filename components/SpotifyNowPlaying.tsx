@@ -26,7 +26,6 @@ const Spotify = () => {
 };
 
 const ROTATION_RANGE = 22.5;
-const HALF_ROTATION_RANGE = 22.5 / 2;
 
 const SpotifyNowPlaying = () => {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -34,24 +33,24 @@ const SpotifyNowPlaying = () => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  const xSpring = useSpring(x);
-  const ySpring = useSpring(y);
+  const xSpring = useSpring(x, { stiffness: 300, damping: 30 });
+  const ySpring = useSpring(y, { stiffness: 300, damping: 30 });
 
   const transform = useMotionTemplate`rotateX(${xSpring}deg) rotateY(${ySpring}deg)`;
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (!ref.current) return [0, 0];
+    if (!ref.current) return;
 
     const rect = ref.current.getBoundingClientRect();
 
     const width = rect.width;
     const height = rect.height;
 
-    const mouseX = (e.clientX - rect.left) * ROTATION_RANGE;
-    const mouseY = (e.clientY - rect.top) * ROTATION_RANGE;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
 
-    const rX = (mouseY / height - HALF_ROTATION_RANGE) * -1;
-    const rY = mouseX / width - HALF_ROTATION_RANGE;
+    const rX = ((mouseY / height) - 0.5) * ROTATION_RANGE;
+    const rY = ((mouseX / width) - 0.5) * ROTATION_RANGE * -1;
 
     x.set(rX);
     y.set(rY);
@@ -77,7 +76,7 @@ const SpotifyNowPlaying = () => {
     return () => clearInterval(interval);
   }, []);
 
-  if (!track) return null;
+  if (!track || !track.isPlaying) return null;
 
   return (
     <motion.div
@@ -94,7 +93,6 @@ const SpotifyNowPlaying = () => {
         src={track.albumImageUrl}
         alt={track.title}
         className="h-14 w-14 rounded-xl"
-        whileHover={{ scale: 1.1 }}
       />
       <div className="overflow-hidden">
         <p
