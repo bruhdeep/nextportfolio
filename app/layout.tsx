@@ -4,6 +4,8 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
+import Disclaimer from '@/components/disclaimer';
+
 import { Providers } from "./providers";
 import type React from "react";
 
@@ -61,10 +63,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <Disclaimer />
         <Providers>
+          <SpotifyNowPlaying />
           <Header />
           {children}
-          <SpotifyNowPlaying />
         </Providers>
         <Analytics />
         <SpeedInsights />
