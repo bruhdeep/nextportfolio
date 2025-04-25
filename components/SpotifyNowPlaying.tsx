@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Headphones } from "lucide-react";
+import { useTheme } from "next-themes";
 
 interface NowPlayingTrack {
   isPlaying: boolean;
@@ -15,6 +16,7 @@ interface NowPlayingTrack {
 export default function SpotifyWidget() {
   const [track, setTrack] = useState<NowPlayingTrack | null>(null);
   const [isHovered, setIsHovered] = useState(false);
+  const { theme } = useTheme();
 
   useEffect(() => {
     const fetchTrack = async () => {
@@ -38,16 +40,26 @@ export default function SpotifyWidget() {
     >
       {/* Headphone icon (anchored in place) */}
       <motion.div
-        className="absolute bottom-0 right-0 z-10 flex items-center justify-center w-12 h-12 bg-zinc-900/90 rounded-full shadow-lg"
+        className={`absolute bottom-0 right-0 z-10 flex items-center justify-center w-12 h-12 ${
+          theme === "dark" ? "bg-white/90" : "bg-zinc-900/90"
+        } rounded-full shadow-lg transition-colors duration-200`}
         animate={{ opacity: isHovered ? 0.6 : 1 }}
         transition={{ duration: 0.3 }}
       >
-        <Headphones className="w-4 h-4 text-white" />
+        <Headphones
+          className={`w-4 h-4 ${
+            theme === "dark" ? "text-zinc-900" : "text-white"
+          }`}
+        />
       </motion.div>
 
       {/* Expanding panel behind the icon */}
       <motion.div
-        className="relative flex items-center bg-zinc-900/80 text-white backdrop-blur-md shadow-lg overflow-hidden rounded-full"
+        className={`relative flex items-center ${
+          theme === "dark"
+            ? "bg-white/80 text-zinc-900"
+            : "bg-zinc-900/80 text-white"
+        } backdrop-blur-md shadow-lg overflow-hidden rounded-full transition-colors duration-200`}
         initial={{ width: 48 }}
         animate={{ width: isHovered ? 280 : 48 }}
         transition={{ duration: 0.4, ease: "easeInOut" }}
@@ -78,11 +90,17 @@ export default function SpotifyWidget() {
                   href={track?.songUrl ?? "#"}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs font-medium truncate hover:underline"
+                  className={`text-xs font-medium truncate hover:underline ${
+                    theme === "dark" ? "text-zinc-900" : "text-white"
+                  }`}
                 >
                   {track?.title}
                 </a>
-                <p className="text-[10px] text-zinc-400 truncate">
+                <p
+                  className={`text-[10px] ${
+                    theme === "dark" ? "text-zinc-600" : "text-zinc-400"
+                  } truncate`}
+                >
                   {track?.artist}
                 </p>
               </div>
